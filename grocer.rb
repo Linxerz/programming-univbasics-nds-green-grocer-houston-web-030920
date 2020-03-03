@@ -1,7 +1,14 @@
+require 'pp'
 def find_item_by_name_in_collection(name, collection)
   # Implement me first!
   #
   # Consult README for inputs and outputs
+  collection.each do |hash|
+    if hash[:item] == name
+      return hash
+    end
+  end
+  nil
 end
 
 def consolidate_cart(cart)
@@ -9,18 +16,49 @@ def consolidate_cart(cart)
   #
   # REMEMBER: This returns a new Array that represents the cart. Don't merely
   # change `cart` (i.e. mutate) it. It's easier to return a new thing.
+  cart.each do |item|
+    count = 0
+    cart.each do |duplicate|
+      if item[:item] == duplicate[:item]
+        count += 1
+      end
+    item[:count] = count
+    end
+  end
+  cart
 end
 
 def apply_coupons(cart, coupons)
-  # Consult README for inputs and outputs
-  #
-  # REMEMBER: This method **should** update cart
+
+  coupons.each do |coupon|
+    coupon.each do |attribute, value|
+      name = coupon[:item]
+
+      if cart[name] && cart[name][:count] >= coupon[:num]
+        if cart["#{name} W/COUPON"]
+          cart["#{name} W/COUPON"][:count] += 1
+        else
+          cart["#{name} W/COUPON"] = {:price => coupon[:cost],
+          :clearance => cart[name][:clearance], :count => 1}
+        end
+
+      cart[name][:count] -= coupon[:num]
+    end
+  end
+end
+  cart
 end
 
 def apply_clearance(cart)
   # Consult README for inputs and outputs
   #
   # REMEMBER: This method **should** update cart
+  cart.each do |item|
+    if item[:clearance] == true
+      item[:price] = item[:price] - (item[:price]*0.2)
+    end
+  end
+  cart
 end
 
 def checkout(cart, coupons)
